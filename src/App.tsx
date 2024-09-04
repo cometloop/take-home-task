@@ -4,6 +4,8 @@ import { Button } from './components/Button';
 import { timeOptions } from './utils/timeOptions';
 import { api } from './api';
 import { calculateScore } from './utils/calculateScore';
+import { ErrorMessage } from './components/ErrorMessage';
+import { ForceApiError } from './components/ForceApiError';
 
 const DURATION_PLACEHOLDER = 'Select a duration';
 const durationOptions = timeOptions();
@@ -20,9 +22,12 @@ const App = () => {
 	const isCalculateDisabled = !durationInBed || !durationAsleep;
 	const [isLoading, setIsLoading] = useState(false);
 
+	const [error, setError] = useState<string | undefined>();
+
 	const calculate = useCallback(async () => {
 		setIsLoading(true);
 		setScore(undefined);
+		setError(undefined);
 		if (durationInBed && durationAsleep) {
 			try {
 				const score = calculateScore(
@@ -32,7 +37,7 @@ const App = () => {
 				await api.save(score);
 				setScore(score);
 			} catch (e) {
-				// todo handle error
+				setError('Something went wrong. Please try again.');
 				setScore(undefined);
 			} finally {
 				setIsLoading(false);
@@ -49,8 +54,9 @@ const App = () => {
 					alt='logo'
 				/>
 
-				<div className='flex flex-col w-1/2 gap-2'>
+				<div className='flex flex-col w-2/3 gap-2'>
 					<Dropdown
+						testid='durationInBed'
 						options={durationOptions}
 						disabled={isLoading}
 						label='Duration in bed'
@@ -59,6 +65,7 @@ const App = () => {
 						placeholder={DURATION_PLACEHOLDER}
 					/>
 					<Dropdown
+						testid='durationAsleep'
 						options={durationOptions}
 						disabled={isLoading}
 						label='Duration asleep'
@@ -67,6 +74,7 @@ const App = () => {
 						placeholder={DURATION_PLACEHOLDER}
 					/>
 					<Button
+						data-testid='calculate'
 						onClick={calculate}
 						className='mt-4'
 						disabled={isCalculateDisabled || isLoading}
@@ -78,8 +86,11 @@ const App = () => {
 						{isLoading && 'Loading'}
 						{!isLoading && score}
 					</p>
+
+					{!isLoading && error && <ErrorMessage>{error}</ErrorMessage>}
 				</div>
 			</div>
+			<ForceApiError />
 		</div>
 	);
 };
