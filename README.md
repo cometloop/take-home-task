@@ -24,6 +24,8 @@ Launches the website + Playwright UI to run e2e tests
 
 - If I had more time I would add more test cases around the calculations, as well as all the possible responses the api could possibly return.
 
+- I committed the .env file (which normally I wouldn't do) just to show how I would (in a real world scenario) leverage env variables to get things like an API_BASE_URL instead of hardcoding it in the src files
+
 - I have some q's around the score calculation. In a real world scenario I would reach out to the owner of this ticket to get further clarification. For this exercise I did what I thought made sense.
 
 - I chose to write e2e tests with playwright as it was quicker to standup and didnt require any mocking
